@@ -15,6 +15,6 @@ Homepage = "https://github.com/tkgs0/nonebot-plugin-blacklist"
 Repository = "https://github.com/tkgs0/nonebot-plugin-blacklist"
 
 [build-system]
-requires = ["pdm-pep517>=0.12.0"]
-build-backend = "pdm.pep517.api"
+requires = ["pdm-pep621>=0.4.0"]
+build-backend = "pdm.pep621.api"
 
