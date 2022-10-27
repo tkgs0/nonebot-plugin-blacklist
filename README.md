@@ -17,7 +17,7 @@
   
 ## 📖 介绍
   
-基于 [A-kirami](https://github.com/A-kirami) 大佬的 [黑白名单](https://github.com/A-kirami/nonebot-plugin-namelist) 插件魔改(?)的仅黑名单插件  
+基于 [A-kirami](https://github.com/A-kirami) 大佬的 [黑白名单](https://github.com/A-kirami/nonebot-plugin-namelist) 插件 魔改(?)的仅黑名单插件  
   
 超级用户不受黑名单影响  
   
