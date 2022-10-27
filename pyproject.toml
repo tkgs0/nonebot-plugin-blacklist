@@ -6,7 +6,7 @@ authors = ["月ヶ瀬"]
 license = "MIT"
 readme = "README.md"
 packages = [
-    { include = "nonebot-plugin-blacklist" },
+    { include = "nonebot_plugin_blacklist" },
 ]
 homepage = "https://github.com/tkgs0/nonebot-plugin-blacklist"
 repository = "https://github.com/tkgs0/nonebot-plugin-blacklist"
