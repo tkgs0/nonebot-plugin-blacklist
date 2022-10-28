@@ -5,21 +5,21 @@ body:
   - type: markdown
     attributes:
       value: |
-        在提 issue 前请确保你仔细阅读过文档，搜索过现有的 issue ，并确保你使用的是最新的 YetAnotherPicSearch 。
+        在提 issue 前请确保你仔细阅读过文档，搜索过现有的 issue ，并确保你使用的是最新的 nonebot-plugin-blacklist 。
         
         在启动本项目出现错误时，你可以无视堆栈 (stack) 相关的信息，但错误信息 (Error: xxxxx) 请认真看看，自己稍微翻译翻译就知道大体意思，大部分问题你都可以在本项目文档或搜索引擎中找到解答。
         
         **这些 issue 不会被受理：**
         
         1. 文档中有提到的
-        2. 使用的 YetAnotherPicSearch 不是最新的
+        2. 使用的 nonebot-plugin-blacklist 不是最新的
         3. 大部分“连接失败”问题，请自己排查配置等原因
 
   - type: textarea
     id: environment
     attributes:
-      label: YetAnotherPicSearch 、 go-cqhttp 、 nonebot 、 Python 版本及操作系统
-      placeholder: 如果 YetAnotherPicSearch 不是最新版本还发 issue ，会被直接关闭。
+      label: nonebot-plugin-blacklist 、 go-cqhttp 、 nonebot 、 Python 版本及操作系统
+      placeholder: 如果 nonebot-plugin-blacklist 不是最新版本还发 issue ，会被直接关闭。
     validations:
       required: true
 
@@ -28,7 +28,7 @@ body:
     attributes:
       label: 列出安装的 Python 包
       placeholder: 把 pip freeze -l 执行的结果贴上来。
-      description: 如果你不是通过 pip 或 nb-cli 下载的 YetAnotherPicSearch ，请把你安装的 Python 包列出来。
+      description: 如果你不是通过 pip 或 nb-cli 下载的 nonebot-plugin-blacklist ，请把你安装的 Python 包列出来。
     validations:
       required: false
 
