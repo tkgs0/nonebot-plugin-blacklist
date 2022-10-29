@@ -20,7 +20,8 @@ except ModuleNotFoundError:
 
 superusers = get_driver().config.superusers
 
-file_path = Path(__file__).parent / "blacklist.json"
+data_path = Path() / "data" / "blacklist"
+file_path = data_path / "blacklist.json"
 
 blacklist = (
     json.loads(file_path.read_text("utf-8"))
@@ -31,6 +32,8 @@ blacklist = (
 
 
 def save_blacklist() -> None:
+    if not data_path.exists():
+        file_path.parent.mkdir(parents=True, exist_ok=True)
     file_path.write_text(json.dumps(blacklist), encoding="utf-8")
 
 
