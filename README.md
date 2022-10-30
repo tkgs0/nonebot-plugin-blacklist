@@ -29,7 +29,7 @@
 nb plugin install nonebot-plugin-blacklist
 ```
   
-**使用pip安装**  
+**使用 pip 安装**  
 ```bash
 pip install nonebot-plugin-blacklist
 ```
