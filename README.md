@@ -1,7 +1,7 @@
 <div align="center">
-  <a href="https://v2.nonebot.dev/store"><img src="https://github.com/tkgs0/nbpt/blob/resources/nbp_logo.png" width="180" height="180" alt="NoneBotPluginLogo"></a>
+  <a href="https://v2.nonebot.dev/store"><img src="https://raw.githubusercontent.com/tkgs0/nbpt/resources/nbp_logo.png" width="180" height="180" alt="NoneBotPluginLogo"></a>
   <br>
-  <p><img src="https://github.com/tkgs0/nbpt/blob/resources/NoneBotPlugin.svg" width="240" alt="NoneBotPluginText"></p>
+  <p><img src="https://raw.githubusercontent.com/tkgs0/nbpt/resources/NoneBotPlugin.svg" width="240" alt="NoneBotPluginText"></p>
 </div>
 
 <div align="center">
