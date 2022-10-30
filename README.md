@@ -1,7 +1,14 @@
+<div align="center">
+  <a href="https://v2.nonebot.dev/store"><img src="https://github.com/tkgs0/nbpt/blob/resources/nbp_logo.png" width="180" height="180" alt="NoneBotPluginLogo"></a>
+  <br>
+  <p><img src="https://github.com/tkgs0/nbpt/blob/resources/NoneBotPlugin.svg" width="240" alt="NoneBotPluginText"></p>
+</div>
+
+<div align="center">
 
 # nonebot-plugin-blacklist
 
-*NoneBot 黑名单插件*
+_✨ NoneBot 黑名单插件 ✨_
 
 
 <a href="./LICENSE">
@@ -10,7 +17,9 @@
 <a href="https://pypi.python.org/pypi/nonebot-plugin-blacklist">
     <img src="https://img.shields.io/pypi/v/nonebot-plugin-blacklist.svg" alt="pypi">
 </a>
-<img src="https://img.shields.io/badge/python-3.8+-blue.svg" alt="python">
+<a href="https://www.python.org">
+    <img src="https://img.shields.io/badge/python-3.8+-blue.svg" alt="python">
+</a>
 
 </div>
 
