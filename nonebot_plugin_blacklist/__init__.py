@@ -1,12 +1,13 @@
 from pathlib import Path
 from typing import Literal
 
-from nonebot import get_driver, logger, on_command
+from nonebot import get_driver, on_command
+from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import (
     Bot,
     Message,
+    Event,
     MessageEvent,
-    PokeNotifyEvent,
     GroupMessageEvent,
 )
 from nonebot.exception import IgnoredException
@@ -57,26 +58,11 @@ def is_number(s: str) -> bool:
 
 
 @event_preprocessor
-def blacklist_processor_poke(event: PokeNotifyEvent):
-    uid = str(event.user_id)
-    if uid in superusers:
+def blacklist_processor(event: Event):
+    if (uid := str(vars(event).get('user_id', None))) in superusers:
         return
-    if isinstance(event, GroupMessageEvent) and str(event.group_id) in blacklist['grouplist']:
-        logger.debug(f'群聊 {event.group_id} 在黑名单中, 忽略本次消息')
-        raise IgnoredException('黑名单群组')
-    elif uid in blacklist['userlist']:
-        logger.debug(f'用户 {uid} 在黑名单中, 忽略本次消息')
-        raise IgnoredException('黑名单用户')
-
-
-
-@event_preprocessor
-def blacklist_processor(event: MessageEvent):
-    uid = str(event.user_id)
-    if uid in superusers:
-        return
-    if isinstance(event, GroupMessageEvent) and str(event.group_id) in blacklist['grouplist']:
-        logger.debug(f'群聊 {event.group_id} 在黑名单中, 忽略本次消息')
+    if (gid := str(vars(event).get('group_id', None))) and gid in blacklist['grouplist']:
+        logger.debug(f'群聊 {gid} 在黑名单中, 忽略本次消息')
         raise IgnoredException('黑名单群组')
     elif uid in blacklist['userlist']:
         logger.debug(f'用户 {uid} 在黑名单中, 忽略本次消息')
