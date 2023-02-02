@@ -54,9 +54,6 @@ def is_number(s: str) -> bool:
 
 
 
-
-
-
 @event_preprocessor
 def blacklist_processor(event: Event):
     if (uid := str(vars(event).get('user_id', None))) in superusers:
@@ -67,9 +64,6 @@ def blacklist_processor(event: Event):
     elif uid in blacklist['userlist']:
         logger.debug(f'用户 {uid} 在黑名单中, 忽略本次消息')
         raise IgnoredException('黑名单用户')
-
-
-
 
 
 
@@ -104,9 +98,6 @@ def handle_blacklist(
     save_blacklist()
     _type = '用户' if type_ == 'userlist' else '群聊'
     return f"已{_mode} {len(uids)} 个{_type}: {', '.join(uids)}"
-
-
-
 
 
 
@@ -152,9 +143,6 @@ async def del_group_list(arg: Message = CommandArg()):
 
 
 
-
-
-
 check_userlist = on_command('查看用户黑名单', permission=SUPERUSER, priority=1, block=True)
 
 @check_userlist.handle()
@@ -168,9 +156,6 @@ check_grouplist = on_command('查看群聊黑名单', permission=SUPERUSER, prio
 @check_grouplist.handle()
 async def check_group_list():
     await check_grouplist.finish(f"当前已屏蔽 {len(blacklist['grouplist'])} 个群聊: {', '.join(blacklist['grouplist'])}")
-
-
-
 
 
 
@@ -233,9 +218,6 @@ async def del_all_friend_(bot: Bot):
     uids = ['{user_id}'.format_map(g) for g in gl]
     handle_blacklist(uids, 'del', 'userlist')
     await del_all_friend.finish(f'已解禁 {len(uids)} 个用户')
-
-
-
 
 
 
