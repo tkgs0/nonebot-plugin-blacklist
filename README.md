@@ -31,23 +31,59 @@ _✨ NoneBot 黑名单插件 ✨_
 超级用户不受黑名单影响  
   
 ## 💿 安装
-  
-**使用 nb-cli 安装**  
-在 nonebot2 项目的根目录下打开命令行, 输入以下指令即可安装  
-```bash
-nb plugin install nonebot-plugin-blacklist
-```
-  
-**使用 pip 安装**  
-```bash
-pip install nonebot-plugin-blacklist
-```
-  
-打开 nonebot2 项目的 `bot.py` 文件, 在其中写入
-```python
-nonebot.load_plugin('nonebot_plugin_blacklist')
-```
-  
+
+**nb-cli安装, 包管理器安装  二选一**
+
+<details>
+<summary>使用 nb-cli 安装</summary>
+
+在 nonebot2 项目的根目录下打开命令行, 输入以下指令即可安装
+
+    nb plugin install nonebot-plugin-blacklist
+
+</details>
+
+<details>
+<summary>使用包管理器安装</summary>
+
+在 nonebot2 项目的插件目录下, 打开命令行,
+
+**根据你使用的包管理器, 输入相应的安装命令**
+
+<details>
+<summary>pip</summary>
+
+    pip install nonebot-plugin-blacklist
+
+</details>
+<details>
+<summary>pdm</summary>
+
+    pdm add nonebot-plugin-blacklist
+
+</details>
+<details>
+<summary>poetry</summary>
+
+    poetry add nonebot-plugin-blacklist
+
+</details>
+<details>
+<summary>conda</summary>
+
+    conda install nonebot-plugin-blacklist
+
+</details>
+
+打开 bot项目下的 `pyproject.toml` 文件,
+
+在其 `plugins` 里加入 `nonebot_plugin_blacklist`
+
+    plugins = ["nonebot_plugin_blacklist"]
+
+</details>
+</details>
+
 ## 🎉 使用
   
 拉黑:  
