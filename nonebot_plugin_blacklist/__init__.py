@@ -15,10 +15,7 @@ from nonebot.message import event_preprocessor
 from nonebot.permission import SUPERUSER
 from nonebot.params import CommandArg, ArgStr
 
-try:
-    import ujson as json
-except ModuleNotFoundError:
-    import json
+import ujson as json
 
 superusers = get_driver().config.superusers
 
