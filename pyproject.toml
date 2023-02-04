@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nonebot-plugin-blacklist"
-version = "0.3.0"
+version = "0.3.1"
 description = "Blacklist in NoneBot2"
 authors = ["月ヶ瀬"]
 license = "MIT"
@@ -16,6 +16,7 @@ keywords = ["nonebot", "blacklist"]
 python = "^3.8"
 nonebot-adapter-onebot = "^2.2.0"
 nonebot2 = "^2.0.0-rc.2"
+ujson = ">=5.2.0"
 
 [tool.poetry.dev-dependencies]
 
