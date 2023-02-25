@@ -222,7 +222,7 @@ async def _(bot: Bot, event: GroupBanNoticeEvent):
         for superuser in bot.config.superusers:
             await bot.send_private_msg(
                 user_id=int(superuser),
-                message='ⓘ在群聊 {event.group_id} 受到禁言, 已自动拉黑该群聊.'
+                message=f'ⓘ在群聊 {event.group_id} 受到禁言, 已自动拉黑该群聊.'
             )
             await asyncio.sleep(random.random()+1)
 
