@@ -27,12 +27,24 @@ file_path.parent.mkdir(parents=True, exist_ok=True)
 blacklist = (
     json.loads(file_path.read_text('utf-8'))
     if file_path.is_file()
-    else {'grouplist': ['ban_auto_sleep'], 'userlist': []}
+    else {
+        'grouplist': [],
+        'userlist': [],
+        'ban_auto_sleep': True
+    }
 )
 
 
 def save_blacklist() -> None:
     file_path.write_text(json.dumps(blacklist), encoding='utf-8')
+
+
+if not blacklist.get('ban_auto_sleep'):
+    if 'ban_auto_sleep' in blacklist['grouplist']:
+        blacklist.update({'ban_auto_sleep': True})
+    else:
+        blacklist.update({'ban_auto_sleep': False})
+    save_blacklist()
 
 
 def is_number(s: str) -> bool:
@@ -143,7 +155,7 @@ check_grouplist = on_command('查看群聊黑名单', permission=SUPERUSER, prio
 
 @check_grouplist.handle()
 async def check_group_list():
-    await check_grouplist.finish(f"当前已屏蔽 {len(blacklist['grouplist'])} 个群聊: {', '.join(blacklist['grouplist'])}")
+    await check_grouplist.finish(f"自觉静默: {'开' if blacklist['ban_auto_sleep'] else '关'}\n当前已屏蔽 {len(blacklist['grouplist'])} 个群聊: {', '.join(blacklist['grouplist'])}")
 
 
 add_group = on_command('/静默', permission=SUPERUSER, priority=1, block=True)
@@ -217,7 +229,7 @@ async def reset_list(flag: str = ArgStr('flag')):
 
 @on_notice(priority=2, block=False).handle()
 async def _(bot: Bot, event: GroupBanNoticeEvent):
-    if 'ban_auto_sleep' in blacklist['grouplist'] and event.is_tome() and event.duration:
+    if blacklist['ban_auto_sleep'] and event.is_tome() and event.duration:
         handle_blacklist([f'{event.group_id}'], 'add', 'grouplist')
         for superuser in bot.config.superusers:
             await bot.send_private_msg(
@@ -233,11 +245,10 @@ ban_auto_sleep = on_command('自觉静默', permission=SUPERUSER, priority=1, bl
 async def _(arg: Message = CommandArg()):
     msg = arg.extract_plain_text().strip()
     if not msg or msg.startswith('开'):
-        blacklist['grouplist'].append('ban_auto_sleep')
-        blacklist['grouplist'] = list(set(blacklist['grouplist']))
+        blacklist['ban_auto_sleep'] = True
         text = '自觉静默已开启.'
     elif msg.startswith('关'):
-        blacklist['grouplist'] = [uid for uid in blacklist['grouplist'] if uid not in ['ban_auto_sleep']]
+        blacklist['ban_auto_sleep'] = False
         text = '自觉静默已关闭.'
     else:
         return
