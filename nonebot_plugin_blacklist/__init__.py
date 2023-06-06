@@ -41,6 +41,7 @@ def save_blacklist() -> None:
 
 if not blacklist.get('ban_auto_sleep'):
     if 'ban_auto_sleep' in blacklist['grouplist']:
+        blacklist['grouplist'] = [ uid for uid in blacklist['grouplist'] if uid != 'ban_auto_sleep' ]
         blacklist.update({'ban_auto_sleep': True})
     else:
         blacklist.update({'ban_auto_sleep': False})
