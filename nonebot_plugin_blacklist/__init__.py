@@ -230,14 +230,16 @@ async def reset_list(flag: str = ArgStr('flag')):
 
 @on_notice(priority=2, block=False).handle()
 async def _(bot: Bot, event: GroupBanNoticeEvent):
-    if blacklist['ban_auto_sleep'] and event.is_tome() and event.duration:
-        handle_blacklist([f'{event.group_id}'], 'add', 'grouplist')
-        for superuser in bot.config.superusers:
-            await bot.send_private_msg(
-                user_id=int(superuser),
-                message=f'ⓘ在群聊 {event.group_id} 受到禁言, 已自动拉黑该群聊.'
-            )
-            await asyncio.sleep(random.random()+1)
+    if event.is_tome() and event.duration:
+        logger.info(msg := "在群聊 {event.group_id} 受到 {event.operator_id} 禁言")
+        if blacklist['ban_auto_sleep']:
+            handle_blacklist([f'{event.group_id}'], 'add', 'grouplist')
+            for superuser in bot.config.superusers:
+                await bot.send_private_msg(
+                    user_id=int(superuser),
+                    message=f'ⓘ{msg}, 已自动拉黑该群聊.'
+                )
+                await asyncio.sleep(random.random()+1)
 
 
 ban_auto_sleep = on_command('自觉静默', permission=SUPERUSER, priority=1, block=True)
