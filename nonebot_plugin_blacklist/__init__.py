@@ -281,7 +281,8 @@ async def _(bot: Bot, event: GroupBanNoticeEvent):
     self_id = check_self_id(event.self_id)
 
     if event.is_tome() and event.duration:
-        logger.info(msg := f"在群聊 {event.group_id} 受到 {event.operator_id} 禁言")
+        msg = f"在群聊 {event.group_id} 受到 {event.operator_id} 禁言"
+        logger.info(f'{self_id} {msg}')
         if blacklist[self_id]['ban_auto_sleep']:
             handle_blacklist(self_id, [f'{event.group_id}'], 'add', 'grouplist')
             for superuser in bot.config.superusers:
