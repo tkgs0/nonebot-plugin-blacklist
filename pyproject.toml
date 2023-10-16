@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nonebot-plugin-blacklist"
-version = "0.3.7"
+version = "1.0.0"
 description = "Blacklist in NoneBot2"
 authors = ["月ヶ瀬"]
 license = "MIT"
