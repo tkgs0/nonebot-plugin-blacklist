@@ -1,4 +1,4 @@
-import asyncio, random
+import asyncio, random, unicodedata
 from pathlib import Path
 from typing import Literal
 
@@ -31,6 +31,14 @@ blacklist = (
     else {}
 )
 
+template = {
+    'private': False,
+    'privlist': [],
+    'grouplist': [],
+    'userlist': [],
+    'ban_auto_sleep': True
+}
+
 
 def save_blacklist() -> None:
     file_path.write_text(
@@ -46,14 +54,22 @@ def save_blacklist() -> None:
 
 def check_self_id(self_id) -> str:
     self_id = f'{self_id}'
+    temp: dict = {}
+    temp.update(template)
 
-    if not blacklist.get(self_id):
+    try:
+        if not blacklist.get(self_id):
+            blacklist.update({
+                self_id: temp
+            })
+            save_blacklist()
+        for i in template:
+            if blacklist[self_id].get(i) == None:
+                blacklist[self_id].update({i: temp[i]})
+                save_blacklist()
+    except Exception:
         blacklist.update({
-            self_id: {
-            'grouplist': [],
-            'userlist': [],
-            'ban_auto_sleep': True
-            }
+            self_id: temp
         })
         save_blacklist()
 
@@ -67,7 +83,6 @@ def is_number(s: str) -> bool:
     except ValueError:
         pass
     try:
-        import unicodedata
         unicodedata.numeric(s)
         return True
     except (TypeError, ValueError):
@@ -89,16 +104,21 @@ def blacklist_processor(event: Event):
         logger.debug(f'用户 {uid} 在 {self_id} 黑名单中, 忽略本次消息')
         raise IgnoredException('黑名单用户')
 
+    if not vars(event).get('group_id', None):
+        if not blacklist[self_id]['private'] or uid in blacklist[self_id]['privlist']:
+            logger.debug(f'私聊 {uid} 在 {self_id} 黑名单中, 忽略本次消息')
+            raise IgnoredException('黑名单会话')
+
 
 def handle_msg(
     self_id,
     arg,
     mode: Literal['add', 'del'],
-    type_: Literal['userlist', 'grouplist'],
+    type_: Literal['userlist', 'grouplist', 'privlist'],
 ) -> str:
     uids = arg.extract_plain_text().strip().split()
     if not uids:
-        return '用法: \n拉黑(解禁)用户(群) qq qq1 qq2 ...'
+        return '用法: \n拉黑(解禁)用户(群/私聊) qq qq1 qq2 ...'
     for uid in uids:
         if not is_number(uid):
             return '参数错误, id必须是数字..'
@@ -110,9 +130,15 @@ def handle_blacklist(
     self_id,
     uids: list,
     mode: Literal['add', 'del'],
-    type_: Literal['userlist', 'grouplist'],
+    type_: Literal['userlist', 'grouplist', 'privlist'],
 ) -> str:
     self_id = check_self_id(self_id)
+
+    types = {
+        'userlist': '用户',
+        'grouplist': '群聊',
+        'privlist': '私聊',
+    }
 
     if mode == 'add':
         blacklist[self_id][type_].extend(uids)
@@ -122,7 +148,7 @@ def handle_blacklist(
         blacklist[self_id][type_] = [uid for uid in blacklist[self_id][type_] if uid not in uids]
         _mode = '解禁'
     save_blacklist()
-    _type = '用户' if type_ == 'userlist' else '群聊'
+    _type = types[type_]
     return f"已{_mode} {len(uids)} 个{_type}: {', '.join(uids)}"
 
 
@@ -145,6 +171,17 @@ async def add_group_list(event: MessageEvent, arg: Message = CommandArg()):
     await add_grouplist.finish(msg)
 
 
+add_privlist = on_command('拉黑私聊', aliases={'屏蔽私聊'}, permission=SUPERUSER, priority=1, block=True)
+
+@add_privlist.handle()
+async def add_priv_list(event: MessageEvent, arg: Message = CommandArg()):
+    if uids := [at.data['qq'] for at in event.get_message()['at']]:
+        msg = handle_blacklist(event.self_id, uids, 'add', 'privlist')
+        await add_privlist.finish(msg)
+    msg = handle_msg(event.self_id, arg, 'add', 'privlist')
+    await add_privlist.finish(msg)
+
+
 del_userlist = on_command('解禁用户', aliases={'解封用户'}, permission=SUPERUSER, priority=1, block=True)
 
 @del_userlist.handle()
@@ -162,6 +199,17 @@ del_grouplist = on_command('解禁群', aliases={'解封群'}, permission=SUPERU
 async def del_group_list(event: MessageEvent, arg: Message = CommandArg()):
     msg = handle_msg(event.self_id, arg, 'del', 'grouplist')
     await del_grouplist.finish(msg)
+
+
+del_privlist = on_command('解禁私聊', aliases={'解封私聊'}, permission=SUPERUSER, priority=1, block=True)
+
+@del_privlist.handle()
+async def del_priv_list(event: MessageEvent, arg: Message = CommandArg()):
+    if uids := [at.data['qq'] for at in event.get_message()['at']]:
+        msg = handle_blacklist(event.self_id, uids, 'del', 'privlist')
+        await del_privlist.finish(msg)
+    msg = handle_msg(event.self_id, arg, 'del', 'privlist')
+    await del_privlist.finish(msg)
 
 
 check_userlist = on_command('查看用户黑名单', permission=SUPERUSER, priority=1, block=True)
@@ -182,6 +230,38 @@ async def check_group_list(event: MessageEvent, args: Message = CommandArg()):
     self_id = check_self_id(arg) if is_number(arg) else check_self_id(event.self_id)
     gids = blacklist[self_id]['grouplist']
     await check_grouplist.finish(f"{self_id}\n自觉静默: {'开' if blacklist[self_id]['ban_auto_sleep'] else '关'}\n当前已屏蔽 {len(gids)} 个群聊: {', '.join(gids)}")
+
+
+check_privlist = on_command('查看私聊黑名单', permission=SUPERUSER, priority=1, block=True)
+
+@check_privlist.handle()
+async def check_priv_list(event: MessageEvent, args: Message = CommandArg()):
+    arg = args.extract_plain_text().strip()
+    self_id = check_self_id(arg) if is_number(arg) else check_self_id(event.self_id)
+    uids = blacklist[self_id]['privlist']
+    await check_privlist.finish(f"{self_id}\n私聊状态: {'响应' if blacklist[self_id]['private'] else '静默'}\n当前已屏蔽 {len(uids)} 个私聊: {', '.join(uids)}")
+
+
+enable_private = on_command('私聊响应', aliases={'私聊启用','响应私聊', '启用私聊'}, permission=SUPERUSER, priority=1, block=True)
+
+@enable_private.handle()
+async def _(event: MessageEvent, args: Message = CommandArg()):
+    arg = args.extract_plain_text().strip()
+    self_id = check_self_id(arg) if is_number(arg) else check_self_id(event.self_id)
+    blacklist[self_id]['private'] = True
+    save_blacklist()
+    await enable_private.finish(f'{self_id} 私聊响应.')
+
+
+disable_private = on_command('私聊静默', aliases={'私聊禁用', '静默私聊', '禁用私聊'}, permission=SUPERUSER, priority=1, block=True)
+
+@disable_private.handle()
+async def _(event: MessageEvent, args: Message = CommandArg()):
+    arg = args.extract_plain_text().strip()
+    self_id = check_self_id(arg) if is_number(arg) else check_self_id(event.self_id)
+    blacklist[self_id]['private'] = False
+    save_blacklist()
+    await disable_private.finish(f'{self_id} 私聊静默.')
 
 
 add_group = on_command('/静默', permission=SUPERUSER, priority=1, block=True)
