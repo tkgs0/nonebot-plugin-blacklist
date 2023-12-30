@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Literal
 
 from nonebot import get_driver, on_command, on_notice
+from nonebot.plugin import PluginMetadata
 from nonebot.log import logger
 from nonebot.matcher import Matcher
 from nonebot.adapters.onebot.v11 import (
@@ -19,6 +20,31 @@ from nonebot.permission import SUPERUSER
 from nonebot.params import CommandArg
 
 import ujson as json
+
+
+usage: str ="""
+
+指令表:
+·拉黑(解禁)用户(群/私聊) qq qq1 qq2 ...
+·拉黑(解禁)所有好友(群)    # 只对已添加的好友/群生效
+·响应(静默)私聊 / 启用(禁用)私聊
+·查看用户(群聊/私聊)黑名单
+·重置黑名单
+·重置所有黑名单
+·自觉静默开(关)
+# 群内发送 "/静默" "/响应" 可快捷拉黑/解禁当前群聊
+
+""".strip()
+
+
+__plugin_meta__ = PluginMetadata(
+    name="黑名单",
+    description="黑名单插件",
+    usage=usage,
+    type="application",
+    homepage="https://github.com/tkgs0/nonebot-plugin-blacklist"
+)
+
 
 superusers = get_driver().config.superusers
 
@@ -104,7 +130,7 @@ def blacklist_processor(event: Event):
         logger.debug(f'用户 {uid} 在 {self_id} 黑名单中, 忽略本次消息')
         raise IgnoredException('黑名单用户')
 
-    if not vars(event).get('group_id', None):
+    if not gid and uid:
         if not blacklist[self_id]['private'] or uid in blacklist[self_id]['privlist']:
             logger.debug(f'私聊 {uid} 在 {self_id} 黑名单中, 忽略本次消息')
             raise IgnoredException('黑名单会话')
