@@ -119,19 +119,22 @@ def is_number(s: str) -> bool:
 @event_preprocessor
 def blacklist_processor(event: Event):
     self_id = check_self_id(event.self_id)
+    uid = vars(event).get('user_id')
+    gid = vars(event).get('group_id')
 
-    if (uid := str(vars(event).get('user_id', None))) in superusers:
+    if uid and f'{uid}' in superusers:
         return
 
-    if (gid := str(vars(event).get('group_id', None))) and gid in blacklist[self_id]['grouplist']:
+    if gid and f'{gid}' in blacklist[self_id]['grouplist']:
         logger.debug(f'群聊 {gid} 在 {self_id} 黑名单中, 忽略本次消息')
         raise IgnoredException('黑名单群组')
-    elif uid in blacklist[self_id]['userlist']:
+
+    if uid and f'{uid}' in blacklist[self_id]['userlist']:
         logger.debug(f'用户 {uid} 在 {self_id} 黑名单中, 忽略本次消息')
         raise IgnoredException('黑名单用户')
 
     if not gid and uid:
-        if not blacklist[self_id]['private'] or uid in blacklist[self_id]['privlist']:
+        if not blacklist[self_id]['private'] or f'{uid}' in blacklist[self_id]['privlist']:
             logger.debug(f'私聊 {uid} 在 {self_id} 黑名单中, 忽略本次消息')
             raise IgnoredException('黑名单会话')
 
