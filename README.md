@@ -20,6 +20,9 @@ _✨ NoneBot 黑名单插件 ✨_
 <a href="https://www.python.org">
     <img src="https://img.shields.io/badge/python-3.8+-blue.svg" alt="python">
 </a>
+<a href="https://github.com/Mrs4s/go-cqhttp">
+    <img src="https://img.shields.io/badge/gocq-1.1.0-blueviolet.svg" alt="go-cqhttp">
+</a>
 
 </div>
 
@@ -127,3 +130,5 @@ _✨ NoneBot 黑名单插件 ✨_
 群内发送 **`/静默`**, **`/响应`** 可快捷拉黑/解禁当前群聊  
   
 `拉黑/解禁所有` 只对已添加的群/好友生效
+  
+注: **本插件目前仅支持 nonebot2 + go-cqhttp 的使用方式, 一切非此二者结合的使用方式造成的问题请自行探索解决, 或者使用其他插件**
