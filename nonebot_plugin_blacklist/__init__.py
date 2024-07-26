@@ -42,7 +42,8 @@ __plugin_meta__ = PluginMetadata(
     description="黑名单插件",
     usage=usage,
     type="application",
-    homepage="https://github.com/tkgs0/nonebot-plugin-blacklist"
+    homepage="https://github.com/tkgs0/nonebot-plugin-blacklist",
+    supported_adapters={"nonebot.adapter.onebot.v11"}
 )
 
 
