@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nonebot-plugin-blacklist"
-version = "1.3.3"
+version = "1.4.0"
 description = "Blacklist in NoneBot2"
 authors = ["月ヶ瀬"]
 license = "MIT"
@@ -13,15 +13,15 @@ repository = "https://github.com/tkgs0/nonebot-plugin-blacklist"
 keywords = ["nonebot", "blacklist"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
-nonebot-adapter-onebot = "^2.2.0"
-nonebot2 = "^2.0.1"
+python = "^3.9"
+nonebot2 = "^2.3.1"
+nonebot-adapter-onebot = "^2.4.1"
 ujson = ">=5.2.0"
 
 [tool.poetry.dev-dependencies]
 
 [tool.mypy]
-python_version = "3.8"
+python_version = "3.9"
 ignore_missing_imports = true
 implicit_reexport = true
 pretty = true
