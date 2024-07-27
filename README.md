@@ -18,10 +18,10 @@ _✨ NoneBot 黑名单插件 ✨_
     <img src="https://img.shields.io/pypi/v/nonebot-plugin-blacklist.svg" alt="pypi">
 </a>
 <a href="https://www.python.org">
-    <img src="https://img.shields.io/badge/python-3.8+-blue.svg" alt="python">
+    <img src="https://img.shields.io/badge/python-3.9+-blue.svg" alt="python">
 </a>
 <a href="https://nonebot.dev">
-    <img src="https://img.shields.io/badge/NoneBot-2.0.1+-red.svg" alt="NoneBot">
+    <img src="https://img.shields.io/badge/nonebot-2.3.1+-red.svg" alt="nonebot">
 </a>
 <a href="https://github.com/Mrs4s/go-cqhttp">
     <img src="https://img.shields.io/badge/gocq-1.1.0+-blueviolet.svg" alt="go-cqhttp">
