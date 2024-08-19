@@ -48,15 +48,22 @@ body:
 
   - type: input
     attributes:
-      label: blacklist
+      label: nonebot-plugin-blacklist
       placeholder: 你所使用的 nonebot-plugin-blacklist 版本
     validations:
       required: true
 
   - type: input
     attributes:
-      label: go-cqhttp
-      placeholder: 你所使用的 go-cqhttp 版本
+      label: client
+      placeholder: 你所使用的协议端名称以及其版本
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: nonebot-adapter
+      placeholder: 你所使用的适配器名称以及其版本
     validations:
       required: true
 
@@ -77,7 +84,7 @@ body:
   - type: input
     attributes:
       label: 操作系统
-      placeholder: 你所使用的操作系统以及系统版本
+      placeholder: 你所使用的操作系统以及其版本
     validations:
       required: true
 
