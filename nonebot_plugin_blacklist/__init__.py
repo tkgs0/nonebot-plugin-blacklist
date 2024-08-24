@@ -279,7 +279,7 @@ async def check_priv_list(event: MessageEvent, args: Message = CommandArg()):
     await check_privlist.finish(f"{self_id}\n私聊状态: {'响应' if blacklist[self_id]['private'] else '静默'}\n当前已屏蔽 {len(uids)} 个私聊: {', '.join(uids)}")
 
 
-enable_group = on_command(('群聊响应', '响应群聊'), permission=SUPERUSER, priority=1, block=True)
+enable_group = on_command('群聊响应', aliases={'响应群聊'}, permission=SUPERUSER, priority=1, block=True)
 
 @enable_group.handle()
 async def _(event: MessageEvent, args: Message = CommandArg()):
@@ -290,7 +290,7 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
     await enable_group.finish(f'{self_id} 群聊响应.')
 
 
-disable_group = on_command(('群聊静默', '静默群聊'), permission=SUPERUSER, priority=1, block=True)
+disable_group = on_command('群聊静默', aliases={'静默群聊'}, permission=SUPERUSER, priority=1, block=True)
 
 @disable_group.handle()
 async def _(event: MessageEvent, args: Message = CommandArg()):
@@ -301,7 +301,7 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
     await disable_group.finish(f'{self_id} 群聊静默.')
 
 
-enable_private = on_command(('私聊响应', '响应私聊'), permission=SUPERUSER, priority=1, block=True)
+enable_private = on_command('私聊响应', aliases={'响应私聊'}, permission=SUPERUSER, priority=1, block=True)
 
 @enable_private.handle()
 async def _(event: MessageEvent, args: Message = CommandArg()):
@@ -312,7 +312,7 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
     await enable_private.finish(f'{self_id} 私聊响应.')
 
 
-disable_private = on_command(('私聊静默', '静默私聊'), permission=SUPERUSER, priority=1, block=True)
+disable_private = on_command('私聊静默', aliases={'静默私聊'}, permission=SUPERUSER, priority=1, block=True)
 
 @disable_private.handle()
 async def _(event: MessageEvent, args: Message = CommandArg()):
