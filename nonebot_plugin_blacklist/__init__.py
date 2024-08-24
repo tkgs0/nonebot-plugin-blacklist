@@ -25,14 +25,20 @@ import ujson as json
 usage: str ="""
 
 指令表:
-·拉黑(解禁)用户(群/私聊) qq qq1 qq2 ...
-·拉黑(解禁)所有好友(群)    # 只对已添加的好友/群生效
-·响应(静默)私聊 / 启用(禁用)私聊
-·查看用户(群聊/私聊)黑名单
-·重置黑名单
-·重置所有黑名单
-·自觉静默开(关)
-# 群内发送 "/静默" "/响应" 可快捷拉黑/解禁当前群聊
+  静默(响应)私聊(群聊)
+
+  拉黑(解禁)用户(群/私聊) qq qq1 qq2 ...
+  拉黑(解禁)所有好友(群)
+  自觉静默开(关)
+
+  查看用户(群聊/私聊)黑名单 bot
+  重置黑名单 bot bot1 bot2 ...
+  重置所有黑名单
+
+  # 不指定bot则为当前bot
+
+  # 群内发送 "/静默" "/响应" 可快捷拉黑/解禁当前群聊
+  # "拉黑所有" 只对已添加的群/好友生效
 
 """.strip()
 
@@ -60,6 +66,7 @@ blacklist = (
 
 template = {
     'private': False,
+    'group': True,
     'privlist': [],
     'grouplist': [],
     'userlist': [],
@@ -126,7 +133,7 @@ def blacklist_processor(event: Event):
     if uid and f'{uid}' in superusers:
         return
 
-    if gid and f'{gid}' in blacklist[self_id]['grouplist']:
+    if gid and (not blacklist[self_id]['group'] or f'{gid}' in blacklist[self_id]['grouplist']):
         logger.debug(f'群聊 {gid} 在 {self_id} 黑名单中, 忽略本次消息')
         raise IgnoredException('黑名单群组')
 
@@ -259,7 +266,7 @@ async def check_group_list(event: MessageEvent, args: Message = CommandArg()):
     arg = args.extract_plain_text().strip()
     self_id = check_self_id(arg) if is_number(arg) else check_self_id(event.self_id)
     gids = blacklist[self_id]['grouplist']
-    await check_grouplist.finish(f"{self_id}\n自觉静默: {'开' if blacklist[self_id]['ban_auto_sleep'] else '关'}\n当前已屏蔽 {len(gids)} 个群聊: {', '.join(gids)}")
+    await check_grouplist.finish(f"{self_id}\n群聊状态: {'响应' if blacklist[self_id]['group'] else '静默'}\n自觉静默: {'开' if blacklist[self_id]['ban_auto_sleep'] else '关'}\n当前已屏蔽 {len(gids)} 个群聊: {', '.join(gids)}")
 
 
 check_privlist = on_command('查看私聊黑名单', permission=SUPERUSER, priority=1, block=True)
@@ -272,7 +279,29 @@ async def check_priv_list(event: MessageEvent, args: Message = CommandArg()):
     await check_privlist.finish(f"{self_id}\n私聊状态: {'响应' if blacklist[self_id]['private'] else '静默'}\n当前已屏蔽 {len(uids)} 个私聊: {', '.join(uids)}")
 
 
-enable_private = on_command('私聊响应', aliases={'私聊启用','响应私聊', '启用私聊'}, permission=SUPERUSER, priority=1, block=True)
+enable_group = on_command(('群聊响应', '响应群聊'), permission=SUPERUSER, priority=1, block=True)
+
+@enable_group.handle()
+async def _(event: MessageEvent, args: Message = CommandArg()):
+    arg = args.extract_plain_text().strip()
+    self_id = check_self_id(arg) if is_number(arg) else check_self_id(event.self_id)
+    blacklist[self_id]['group'] = True
+    save_blacklist()
+    await enable_group.finish(f'{self_id} 群聊响应.')
+
+
+disable_group = on_command(('群聊静默', '静默群聊'), permission=SUPERUSER, priority=1, block=True)
+
+@disable_group.handle()
+async def _(event: MessageEvent, args: Message = CommandArg()):
+    arg = args.extract_plain_text().strip()
+    self_id = check_self_id(arg) if is_number(arg) else check_self_id(event.self_id)
+    blacklist[self_id]['group'] = False
+    save_blacklist()
+    await disable_group.finish(f'{self_id} 群聊静默.')
+
+
+enable_private = on_command(('私聊响应', '响应私聊'), permission=SUPERUSER, priority=1, block=True)
 
 @enable_private.handle()
 async def _(event: MessageEvent, args: Message = CommandArg()):
@@ -283,7 +312,7 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
     await enable_private.finish(f'{self_id} 私聊响应.')
 
 
-disable_private = on_command('私聊静默', aliases={'私聊禁用', '静默私聊', '禁用私聊'}, permission=SUPERUSER, priority=1, block=True)
+disable_private = on_command(('私聊静默', '静默私聊'), permission=SUPERUSER, priority=1, block=True)
 
 @disable_private.handle()
 async def _(event: MessageEvent, args: Message = CommandArg()):
@@ -323,11 +352,12 @@ async def add_all_group_(bot: Bot, event: MessageEvent):
 del_all_group = on_command('解禁所有群', aliases={'解封所有群'}, permission=SUPERUSER, priority=1, block=True)
 
 @del_all_group.handle()
-async def del_all_group_(bot: Bot, event: MessageEvent):
-    gl = await bot.get_group_list()
-    gids = ['{group_id}'.format_map(g) for g in gl]
-    handle_blacklist(event.self_id, gids, 'del', 'grouplist')
-    await del_all_group.finish(f'已解禁 {len(gids)} 个群聊')
+async def del_all_group_(event: MessageEvent):
+    self_id = check_self_id(event.self_id)
+    n = len(blacklist[self_id]['grouplist'])
+    blacklist[self_id]['grouplist'].clear()
+    save_blacklist()
+    await del_all_group.finish(f'已解禁 {n} 个群聊')
 
 
 add_all_friend = on_command('拉黑所有好友', aliases={'屏蔽所有好友'}, permission=SUPERUSER, priority=1, block=True)
@@ -343,11 +373,12 @@ async def add_all_friend_(bot: Bot, event: MessageEvent):
 del_all_friend = on_command('解禁所有好友', aliases={'解封所有好友'}, permission=SUPERUSER, priority=1, block=True)
 
 @del_all_friend.handle()
-async def del_all_friend_(bot: Bot, event: MessageEvent):
-    gl = await bot.get_friend_list()
-    uids = ['{user_id}'.format_map(g) for g in gl]
-    handle_blacklist(event.self_id, uids, 'del', 'userlist')
-    await del_all_friend.finish(f'已解禁 {len(uids)} 个用户')
+async def del_all_friend_(event: MessageEvent):
+    self_id = check_self_id(event.self_id)
+    n = len(blacklist[self_id]['userlist'])
+    blacklist[self_id]['userlist'].clear()
+    save_blacklist()
+    await del_all_friend.finish(f'已解禁 {n} 个用户')
 
 
 reset_all_blacklist = on_command('重置所有黑名单', aliases={'清空所有黑名单'}, permission=SUPERUSER, priority=1, block=True)
